@@ -12,7 +12,6 @@ const db = new sqlite3.Database('./db/election.db', err => {
     console.log('Connected to the election database!')
 })
 
-
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
@@ -50,8 +49,6 @@ app.get('/api/candidate/:id', (req,res) => {
         });
     });
 });
-
-
 // Delete a candidate
 app.delete('/api/candidate/:id', (req,res) => {
     const sql = `DELETE FROM candidates WHERE id = ?`;
@@ -79,19 +76,18 @@ const sql = `INSERT INTO candidates (first_name, last_name, industry_connected)
 const params = [body.first_name, body.last_name, body.industry_connected];
 // ES5 function, not arrow function, to use `this`
 db.run(sql, params, function(err, result) {
-if (err) {
-res.status(400).json({ error: err.message });
-return;
-}
+    if (err) {
+    res.status(400).json({ error: err.message });
+    return;
+    }
+        res.json({
+        message: 'success',
+        data: body,
+        id: this.lastID
+        });
+    });
+});
 
-res.json({
-message: 'success',
-data: body,
-id: this.lastID
-});
-});
-   
-});
 // Default response for any other request (Not Found) Catch all
 app.use((req,res) => {
     res.status(404).end();
