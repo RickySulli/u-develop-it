@@ -88,7 +88,9 @@ db.run(sql, params, function(err, result) {
         });
     });
 });
-///////////put request
+
+
+///////////edit candidates party id
 router.put('/candidate/:id', (req,res) =>{
     const errors = inputCheck(req.body, 'party_id');
     if (errors){

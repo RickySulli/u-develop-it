@@ -43,26 +43,28 @@ router.get('/voter/:id', (req, res) => {
 
 /////////////////ADD A VOTER\\\\\\\\\\\\\\\\\\
 router.post('/voter', ({body}, res) => {
-    const errors = inputCheck(body, 'first_name', 'last_name', 'email');
-        if (errors) {
-        res.status(400).json({ error: errors });
-        return;
-        }
-    const sql = `INSERT INTO voters (first_name, last_name, email) VALUES(?,?,?)`;
-    const params = [body.first_name, body.last_name, body.email];
+  // Data validation 
+  const errors = inputCheck(body, 'first_name', 'last_name', 'email');
+  if (errors) {
+    res.status(400).json({ error: errors });
+    return;
+  }
+  
+  const sql = `INSERT INTO voters (first_name, last_name, email) VALUES (?,?,?)`;
+  const params = [body.first_name, body.last_name, body.email];
+  // use ES5 function, not arrow to use this 
+  db.run(sql, params, function(err, data) {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
 
-    db.run(sql, params, function(err,data) {
-        if (err){
-            res.status(400).json({error: err.message});
-            return;
-        }
-
-        res.json({
-            message: 'success',
-            data: body,
-            id: this.lastID
-        });
+    res.json({
+      message: 'success',
+      data: body,
+      id: this.lastID
     });
+  });
 });
 
 ////////put change email\\\\\\\
@@ -88,6 +90,23 @@ router.put('/voter/:id', (req, res) => {
       res.json({
         message: 'success',
         data: req.body,
+        changes: this.changes
+      });
+    });
+  });
+////////////////DELETE A VOTER\\\\\\\\\\\\\\
+// Delete a candidate
+router.delete('/candidate/:id', (req, res) => {
+    const sql = `DELETE FROM candidates WHERE id = ?`;
+    const params = [req.params.id];
+    db.run(sql, params, function(err, result) {
+      if (err) {
+        res.status(400).json({ error: res.message });
+        return;
+      }
+  
+      res.json({
+        message: 'successfully deleted',
         changes: this.changes
       });
     });
