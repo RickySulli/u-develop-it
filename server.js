@@ -3,13 +3,13 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 const db = require('./db/database')
 
-
-const apiRoutes = require('./routes/apiRoutes');
-/////////USE API ROUTES\\\\\\\\\
-app.use('/api', apiRoutes);
-//////// EXPRESS MIDDLEWARE\\\\\\\
+//////// EXPRESS MIDDLEWARE\\\\\\\these go lbefore so we know to use these
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
+
+/////////USE API ROUTES\\\\\\\\\
+const apiRoutes = require('./routes/apiRoutes');
+app.use('/api', apiRoutes);
 
 //////// Default response for any other request (Not Found) CATCH-ALL\\\\\\\\\
 app.use((req,res) => {
